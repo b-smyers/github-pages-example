@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  workflow_dispatch: # Enables 'Run workflow' button on Actions page
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest # Use ubuntu VM (default WSL distribution)
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # Get a copy of the repositories code
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4 # Install node and npm to the VM
+        with:
+          node-version: '24' # Latest major node version
+
+      - name: Install Dependencies
+        run: npm ci # Clean install
+
+      - name: Build Project
+        run: npm run build # Build project into './dist' folder
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages # Push built website to branch; this is where your hosted websites files live
+          folder: ./dist # Specify where the built website is
